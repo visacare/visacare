@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>IMM LAWS</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>  
+   <!--   <script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script> -->
+  <script type="text/javascript">
+            var app = angular.module("UserManagement", []);
+         
+            //Controller Part
+            app.controller("UserProfileController", function($scope, $location, $http) {
+            this.loginError="";
+               
+                $scope.usersProfile = [];
+                $scope.userForm = {
+                    persionId : -1,
+                    userId : "",
+                    password : ""
+                };
+         
+                
+                $scope.submitUser = function() {
+         
+                    var method = "";
+                    var url = "";
+                //    var redirectUrl='http://localhost:8080/customerDataAngularJS.html';
+                        //Id is absent in form data, it is create new customer operation
+                        method = "GET";
+                        url = 'getAllUserProfile';
+                   
+         
+                    $http({
+                        method : method,
+                        url : url,
+                        data : angular.toJson($scope.userForm),
+                        headers : {
+                            'Content-Type' : 'application/json'
+                        }
+                    }).then( _success, _error );
+                    alert(data);
+                };
+         
+               
+                function _success(response) {
+                	alert("_success");
+                	$scope.errorMessage = false;
+                	alert(response.data.length);
+                	var track = response.data[0];
+                	alert(track.userId);
+                	alert(track.password);
+                	alert($scope.user.userId);
+                	alert($scope.user.password);
+                	if(track.userId==$scope.user.userId && track.password == $scope.user.password ){
+                		  window.open("http://localhost:8080/customerDataAngularJS.html","_self");	
+                	}else{
+                		 $scope.errorMessage ="UserName or Password in correct";
+                	}
+                	 
+                }
+                
+                function _refreshUserProfileData() {
+                	   alert("_refreshUserProfileData");
+                	   $location.path('http://localhost:8080/customerDataAngularJS.html');
+                    $http({
+                        method : 'GET',
+                        url : 'http://localhost:8080/getAllUserProfile'
+                    }).then(function successCallback(response) {
+                        $scope.usersProfile = response.data;
+                        alert($scope.usersProfile.userId);
+                    /*     alert($scope.usersProfile.userId);
+                    	alert($scope.usersProfile.password); */
+                        alert("redirectUrl");
+                        window.open("http://localhost:8080/customerDataAngularJS.html","_self");
+                        console.log(response.data);
+                        $window.location.href = '/customerDataAngularJS.html';
+                       // System.out.println(response.data);
+                    }, function errorCallback(response) {
+                        console.log(response.statusText);
+                    });
+                }
+         
+                function _error(response) {
+                    console.log(response.statusText);
+                }
+         
+                //Clear the form
+                function _clearFormData() {
+                    $scope.userForm.persionId = -1;
+                    $scope.userForm.userId = "";
+                    $scope.userForm.password = "";
+                
+                };
+            });
+        </script>
+  <style>
+    .loginpage{
+      background: url(images/loginbg.png);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      background-attachment: fixed;
+      height: -webkit-fill-available;                                        
+    }
+    .panel-title img{
+      margin-top:7em;
+    }
+    .main-login{
+      background-color: #fff;
+      padding:25px;
+      border-radius: 5px;
+      max-width: 360px;
+      margin: auto auto;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height:450px;
+    }
+    .main-login label{
+      color: #009bd6;
+      margin-bottom: 10px;
+      font-weight: 400 !important;
+    }
+    .form-feild input {
+      border: 1px solid #e6e6e6 !important;
+      box-shadow: 0px !important;
+      height: 45px !important;
+      border-radius: 0px !important;
+    }
+    input:focus{
+      box-shadow: 0px !important;
+    }
+    .form-feild, .user-title{
+      margin-bottom: 25px;
+      margin-top: 0px;
+    }
+    .user-title, .no-margin-top a, .signuphere a{
+      color: #009bd6;
+      text-decoration: none;
+    }
+    .no-margin-top{
+      margin-top: 0px !important;
+      padding: 0px;
+    }
+    .signuphere{
+      margin-top:30px;
+      font-weight: bold;
+    }
+    .loginbutton{
+      border-radius: 0px !important;
+    }
+ 
+    /*.main-center{
+      margin-top:50% !important;
+    }*/
+  </style>
+
+  </head>
+  <body ng-app="UserManagement" ng-controller="UserProfileController">
+    <div class="loginpage">
+      <div class="container">
+        <div class="row">
+          <div class="panel-heading">
+            <div class="panel-title text-center">
+              <img src="images/logo.png" alt="IMM Laws">
+            </div>
+          </div>
+
+          <div class="main-login main-center"  >
+          <div ng-if="errorMessage">{{ errorMessage }}</div>
+            <h3 class="text-center user-title">User Login</h3>
+            <form ng-submit="submitUser()" name="userForm">
+              <div class="form-group form-feild"  ng-class="{ 'has-error' : userForm.userId.$invalid && (userForm.userId.$dirty || submitted)}">
+                <label for="InputUserId"><span class="glyphicon glyphicon-user"></span> &nbsp Username</label>
+                <input type="text" class="form-control" name="userId" id="userId" class="form-control" ng-model="user.userId" placeholder="Your Name" ng-required="true"   >
+              
+             <p ng-show="userForm.userId.$error.required && (userForm.userId.$dirty || submitted)" class="help-block">User Name is required.</p>
+              </div>
+              <div class="form-group form-feild" ng-class="{ 'has-error' : userForm.password.$invalid && (userForm.password.$dirty || submitted)}">
+                <label for="Password"><span class="glyphicon glyphicon-lock"></span> &nbsp Password</label>
+                <input type="password" class="form-control" id="password"  name="password" ng-model="user.password" placeholder="Password" ng-required="true">
+                <p ng-show="userForm.password.$error.required && (userForm.password.$dirty || submitted)" class="help-block">Password is required.</p>
+           
+              </div>
+              <div class="checkbox no-margin-top col-sm-6 col-xs-6">
+                <label>
+                  <input type="checkbox"> Remember Me
+                </label>
+              </div>
+              <div class="col-sm-6 col-xs-6 text-right no-margin-top">
+                <a href="#">Forget Password?</a>  
+              </div> 
+              <button [disabled]="loading" type="submit" class="btn btn-primary btn-lg btn-block loginbutton" value="Submit">LOGIN</button>
+            <!--  <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /> -->
+              <div class="signuphere text-center">
+                <a href="">Sign Up Here</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
